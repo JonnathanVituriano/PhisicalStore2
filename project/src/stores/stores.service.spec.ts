@@ -16,3 +16,5 @@ describe('StoresService', () => {
     expect(service).toBeDefined();
   });
 });
+
+//atualização

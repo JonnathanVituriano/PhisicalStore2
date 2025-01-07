@@ -13,3 +13,5 @@ import { StoresService } from './stores.service';
   providers: [StoresService]
 })
 export class StoresModule {}
+
+//atualização

@@ -38,3 +38,5 @@ export class Store extends Document {
 }
 
 export const StoreSchema = SchemaFactory.createForClass(Store);
+
+//atualização

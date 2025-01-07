@@ -12,3 +12,4 @@ import { StoresModule } from './stores/stores.module';
 })
 export class AppModule {}
 
+//atualização
