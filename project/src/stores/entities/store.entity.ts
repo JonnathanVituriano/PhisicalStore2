@@ -3,17 +3,12 @@ import { Document } from 'mongoose';
 
 @Schema()
 export class Store extends Document {
+
     @Prop({ required: true })
     storeID: string;
 
     @Prop({ required: true })
     storeName: string;
-
-    @Prop({ required: true })
-    latitude: string;
-
-    @Prop({ require: true })
-    longitude : string;
 
     @Prop({ require: true })
     address1: string;
@@ -35,6 +30,9 @@ export class Store extends Document {
     
     @Prop({ require: true })
     takeOutInStore: boolean;
+
+    @Prop({ required: true, index: '2dsphere' })
+    coordinates: [number];
 }
 
 export const StoreSchema = SchemaFactory.createForClass(Store);
