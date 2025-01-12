@@ -1,3 +1,5 @@
+//C:\Users\Kaneko\Desktop\PhisicalStore2\PhisicalStore2\project\src\config\database.module.ts
+
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';

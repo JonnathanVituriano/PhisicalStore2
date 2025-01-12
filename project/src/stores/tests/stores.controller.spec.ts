@@ -1,3 +1,5 @@
+//C:\Users\Kaneko\Desktop\PhisicalStore2\PhisicalStore2\project\src\stores\dto\create-stores.dto.ts
+
 import { Test, TestingModule } from '@nestjs/testing';
 import { StoresController } from '../stores.controller';
 
@@ -17,4 +19,4 @@ describe('StoresController', () => {
   });
 });
 
-//atualização
+//atualização₢

@@ -1,3 +1,5 @@
+//C:\Users\Kaneko\Desktop\PhisicalStore2\PhisicalStore2\project\src\stores\entities\store.entity.ts
+
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 

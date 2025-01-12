@@ -1,23 +1,30 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { Client } from '@googlemaps/google-maps-services-js';
+import { ViaCepService } from '../via-cep/via-cep.service';
 
 @Injectable()
 export class GoogleMapsService {
   private readonly client = new Client();
   private readonly apiKey = process.env.GOOGLE_MAPS_API_KEY;
 
+  constructor(private readonly viaCepService: ViaCepService) {} 
+
   async getCoordinates(cep: string) {
     try {
+
+      const viaCepResponse = await this.viaCepService.getAddressByCep(cep);
+      const address = `${viaCepResponse.logradouro}, ${viaCepResponse.localidade}, ${viaCepResponse.uf}`;
+
       const response = await this.client.geocode({
         params: {
-          address: cep,
+          address,
           key: this.apiKey,
         },
       });
 
       if (!response.data.results || response.data.results.length === 0) {
         throw new HttpException(
-          `Nenhuma coordenada encontrada para o CEP: ${cep}`,
+          `Nenhuma coordenada encontrada para o endereço: ${address}`,
           HttpStatus.BAD_REQUEST,
         );
       }

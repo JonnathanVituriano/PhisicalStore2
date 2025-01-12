@@ -1,10 +1,16 @@
-import { Controller, Query, Body, Post, Get, Param} from '@nestjs/common';
+//C:\Users\Kaneko\Desktop\PhisicalStore2\PhisicalStore2\project\src\stores\stores.controller.ts
+
+import { Controller, Delete, Query, Body, Post, Put, Get, Param} from '@nestjs/common';
 import { ViaCepService } from 'src/apis/via-cep/via-cep.service';
 import { GoogleMapsService } from 'src/apis/google-maps/google-maps.service';
 import { CorreiosService } from 'src/apis/correios/correios.service';
 import { StoresService } from './stores.service';
 import { CreateStoreDto } from 'src/stores/dto/create-stores.dto';
+import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { IsString, IsNumber } from 'class-validator';
+import { CalculateShippingDto } from './dto/calculate-shipping.dto';
 
+@ApiTags('stores')
 @Controller('stores')
 export class StoresController {
     constructor(
@@ -19,12 +25,28 @@ export class StoresController {
         return this.viaCepService.getAddressByCep(cep);
     }
 
+    @Delete(':id')
+    @ApiOperation({ summary: 'Deletar uma loja pelo ID' })
+    @ApiResponse({ status: 200, description: 'Loja deletada com sucesso.' })
+    @ApiResponse({ status: 404, description: 'Loja não encontrada.' })
+    @Delete(':id')
+    async deleteStore(@Param('id') id: string) {
+        return this.storesService.deleteStore(id);
+    }
+
+    @Put(':id')
+    @ApiOperation({ summary: 'Editar uma loja pelo ID' })
+    @ApiResponse({ status: 200, description: 'Loja atualizada com sucesso.' })
+    @ApiResponse({ status: 404, description: 'Loja não encontrada.' })
+    @Put(':id')
+    async updateStore(@Param('id')id: string, @Body() updateStoreDto: Partial<CreateStoreDto>) {
+        return this.storesService.updateStore(id, updateStoreDto);
+    }
+
     @Get('shipping')
-    async calculateShipping(
-        @Query('cepOrigem') cepOrigem: string,
-        @Query('cepDestino') cepDestino: string,
-        @Query('peso') peso: number,
-    ){
+    @ApiOperation({ summary: 'Calcular o frete entre dois CEPs'})
+    async calculateShipping(@Query() params: CalculateShippingDto) {
+        const { cepOrigem, cepDestino, peso } = params;
         return this.storesService.calculateShipping(cepOrigem, cepDestino, peso);
     }
 
@@ -44,6 +66,14 @@ export class StoresController {
         return this.storesService.findNearby(coordinates.lat, coordinates.lng)
     }
 
+    @Get('test-distance')
+    async testDistance(
+        @Query('origin') origin: string,
+        @Query('destination') destination: string,
+    ) {
+        return this.googleMapsService.calculateDistance(origin, destination);
+    }
+    
     @Get('test-google-maps')
     async testGoogleMaps(@Query('cep') cep: string) {
         return this.googleMapsService.getCoordinates(cep);
@@ -65,9 +95,34 @@ export class StoresController {
     }
 
     @Post()
+    @ApiOperation({ summary: 'Adicionar uma nova loja' })
+    @ApiResponse({ status: 201, description: 'Loja criada com sucesso.' })
+    @ApiResponse({ status: 400, description: 'Dados inválidos.' })
+
     async createStore(@Body() createStoreDto: CreateStoreDto) {
         return this.storesService.createStore(createStoreDto);
     }
+
+    @Get()
+    @ApiOperation({ summary: 'Listar todas as lojas' })
+    @ApiResponse({ status: 200, description: 'Lista de lojas.' })
+
+    async listAll() {
+      return this.storesService.findAll();
+    }
+
+}
+
+export class calculateShipping {
+
+    @IsString()
+    cepOrigem: string;
+
+    @IsString()
+    cepDestino: string;
+
+    @IsNumber()
+    peso: number;
 }
 
 //atualização

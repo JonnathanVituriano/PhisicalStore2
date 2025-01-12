@@ -1,3 +1,5 @@
+//C:\Users\Kaneko\Desktop\PhisicalStore2\PhisicalStore2\project\src\stores\stores.service.ts
+
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose';
@@ -49,7 +51,7 @@ export class StoresService {
                 },
 
                 {
-                    prazo: `${pac[0].PrazoEntrega} dias úteis`,
+                    prazo: `${sedex[0].PrazoEntrega} dias úteis`,
                     price: `R$ ${sedex[0].Valor}`,
                     description: 'SEDEX - Encomenda expressa dos Correios',
                 },
@@ -58,6 +60,14 @@ export class StoresService {
 
     }
 
+    async updateStore(id: string, updateStoreDto: Partial<CreateStoreDto>) {
+        return this.storeModel.findByIdAndUpdate(id, updateStoreDto, { new: true }).exec();
+    }
+
+    async deleteStore(id: string) {
+        return this.storeModel.findByIdAndDelete(id).exec();
+    }
+    
     async createStore(createStoreDto: CreateStoreDto): Promise<Store> {
         const newStore = new this.storeModel(createStoreDto);
         return newStore.save();

@@ -1,4 +1,6 @@
-import { IsString, IsNumber, IsBoolean, IsArray } from "class-validator";
+//C:\Users\Kaneko\Desktop\PhisicalStore2\PhisicalStore2\project\src\stores\dto\create-stores.dto.ts
+
+import { IsString, IsNumber, IsBoolean, IsArray, ArrayMinSize } from "class-validator";
 
 export class CreateStoreDto {
     @IsString()
@@ -29,5 +31,6 @@ export class CreateStoreDto {
     takeOutInStore: boolean;
 
     @IsArray()
+    @ArrayMinSize(2)
     coordinates: [number];
 }

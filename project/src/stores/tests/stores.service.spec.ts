@@ -1,3 +1,5 @@
+//C:\Users\Kaneko\Desktop\PhisicalStore2\PhisicalStore2\project\src\stores\tests\stores.service.spec.ts
+
 import { Test, TestingModule } from '@nestjs/testing';
 import { StoresService } from '../stores.service';
 
