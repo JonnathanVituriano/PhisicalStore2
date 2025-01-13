@@ -1,6 +1,6 @@
 //C:\Users\Kaneko\Desktop\PhisicalStore2\PhisicalStore2\project\src\stores\stores.controller.ts
 
-import { Controller, Delete, Query, Body, Post, Put, Get, Param} from '@nestjs/common';
+import { Controller, Delete, Query, Body, Post, Put, Get, Param, Logger} from '@nestjs/common';
 import { ViaCepService } from 'src/apis/via-cep/via-cep.service';
 import { GoogleMapsService } from 'src/apis/google-maps/google-maps.service';
 import { CorreiosService } from 'src/apis/correios/correios.service';
@@ -13,6 +13,8 @@ import { CalculateShippingDto } from './dto/calculate-shipping.dto';
 @ApiTags('stores')
 @Controller('stores')
 export class StoresController {
+    private readonly logger = new Logger('StoresController.name');
+    
     constructor(
         private readonly viaCepService: ViaCepService,
         private readonly googleMapsService: GoogleMapsService,
@@ -46,6 +48,7 @@ export class StoresController {
     @Get('shipping')
     @ApiOperation({ summary: 'Calcular o frete entre dois CEPs'})
     async calculateShipping(@Query() params: CalculateShippingDto) {
+        this.logger.debug(`Parametros recebidos: ${JSON.stringify(params)}`);
         const { cepOrigem, cepDestino, peso } = params;
         return this.storesService.calculateShipping(cepOrigem, cepDestino, peso);
     }

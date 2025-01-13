@@ -7,6 +7,7 @@ import { Store } from './entities/store.entity';
 import { GoogleMapsService } from 'src/apis/google-maps/google-maps.service';
 import { CorreiosService } from 'src/apis/correios/correios.service';
 import { CreateStoreDto } from './dto/create-stores.dto';
+import { ViaCepService } from 'src/apis/via-cep/via-cep.service';    
 
 @Injectable()
 export class StoresService {
@@ -14,6 +15,7 @@ export class StoresService {
         @InjectModel(Store.name) private readonly storeModel: Model<Store>,
         private readonly googleMapsService: GoogleMapsService,
         private readonly correiosService: CorreiosService,
+        private readonly viaCepService: ViaCepService,
     ) {}
 
     async calculateShipping(cepOrigem: string, cepDestino: string, peso: number) {
@@ -69,7 +71,25 @@ export class StoresService {
     }
     
     async createStore(createStoreDto: CreateStoreDto): Promise<Store> {
-        const newStore = new this.storeModel(createStoreDto);
+        const { postalCode, ...rest } = createStoreDto;
+
+        const addressData = await this.viaCepService.getAddressByCep(postalCode);
+
+        if (!addressData || addressData.erro) {
+            throw new Error(`CEP invalido ou não encontrado ${postalCode}`);
+        }
+
+        const {lat, lng} = await this.googleMapsService.getCoordinates(postalCode);
+
+        const newStore = new this.storeModel({
+            ...rest,
+            postalCode,
+            address1: addressData.logradouro,
+            city: addressData.localidade,
+            state: addressData.uf,
+            coordinates: [lng, lat],
+        });
+
         return newStore.save();
     }
 

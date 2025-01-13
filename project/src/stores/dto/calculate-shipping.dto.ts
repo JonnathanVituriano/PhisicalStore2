@@ -3,15 +3,14 @@
 import { IsString, IsNumber, IsNotEmpty } from 'class-validator';
 
 export class CalculateShippingDto {
+  @IsString()
+  @IsNotEmpty()
+  cepOrigem: string;
 
-    @IsString()
-    @IsNotEmpty()
-    cepOrigem: string;
+  @IsString()
+  @IsNotEmpty()
+  cepDestino: string;
 
-    @IsString()
-    @IsNotEmpty()
-    cepDestino: string;
-
-    @IsNumber()
-    peso: number;
+  @IsNumber()
+  peso: number;
 }

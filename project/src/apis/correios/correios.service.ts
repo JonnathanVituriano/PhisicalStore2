@@ -26,7 +26,14 @@ export class CorreiosService {
             sCdAvisoRecebimento: 'N',
         };
 
-        const result = await calcularPrecoPrazo(options);
-        return result;
+        try{
+            console.log('Calculando frete com as opções:', options);
+            const result = await calcularPrecoPrazo(options);
+            console.log('Resultado do API dos Correios:', result);
+            return result;
+        } catch (error) {
+            console.error('Erro bruto:', error);
+            throw new Error(`Erro ao calcular frete: ${error.message} || 'Erro desconhecido'`);
+        }
     }
 }
