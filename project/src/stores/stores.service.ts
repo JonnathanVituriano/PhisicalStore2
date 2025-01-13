@@ -111,6 +111,28 @@ export class StoresService {
     ]);
     }
 
+    async findNearbyByCep(cep: string) {
+
+        const coordinates = await this.googleMapsService.getCoordinates(cep);
+    
+        const MAX_DISTANCE = 50000; 
+        const stores = await this.storeModel.aggregate([
+            {
+                $geoNear: {
+                    near: {
+                        type: 'Point',
+                        coordinates: [coordinates.lng, coordinates.lat],
+                    },
+                    distanceField: 'distance',
+                    maxDistance: MAX_DISTANCE,
+                    spherical: true,
+                },
+            },
+        ]);
+    
+        return stores;
+    }
+    
     async findById(id: string) {
         return this.storeModel.findById(id).exec();
     }

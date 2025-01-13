@@ -1,7 +1,5 @@
-//C:\Users\Kaneko\Desktop\PhisicalStore2\PhisicalStore2\project\src\apis\correios\correios.service.ts
-
 import { Injectable } from '@nestjs/common';
-import { calcularPrecoPrazo, PrecoPrazoRequest } from 'correios-brasil';
+import axios from 'axios';
 
 @Injectable()
 export class CorreiosService {
@@ -11,8 +9,9 @@ export class CorreiosService {
         peso: number,
         tipoFrete: 'PAC' | 'SEDEX',
     ) {
-        const options: PrecoPrazoRequest = {
-            nCdServico: [tipoFrete === 'PAC' ? '04510' : '04014'],
+        const nCdServico = tipoFrete === 'PAC' ? '04510' : '04014';
+        const url = `http://ws.correios.com.br/calculador/CalcPrecoPrazo.aspx`;
+        const params = {
             sCepOrigem: cepOrigem,
             sCepDestino: cepDestino,
             nVlPeso: peso.toString(),
@@ -24,16 +23,26 @@ export class CorreiosService {
             sCdMaoPropria: 'N',
             nVlValorDeclarado: '0',
             sCdAvisoRecebimento: 'N',
+            nCdServico,
+            nCdEmpresa: '',
+            sDsSenha: '',
+            StrRetorno: 'xml',
+            nIndicaCalculo: '3',
         };
 
-        try{
-            console.log('Calculando frete com as opções:', options);
-            const result = await calcularPrecoPrazo(options);
-            console.log('Resultado do API dos Correios:', result);
-            return result;
+        try {
+            console.log('Calculando frete com:', params);
+            const response = await axios.get(url, {
+                params,
+                timeout: 10000, 
+            });
+            
+
+            console.log('Resultado dos Correios:', response.data);
+            return response.data;
         } catch (error) {
-            console.error('Erro bruto:', error);
-            throw new Error(`Erro ao calcular frete: ${error.message} || 'Erro desconhecido'`);
+            console.error('Erro na API dos Correios:', error.message);
+            throw new Error(`Erro ao calcular frete: ${error.message}`);
         }
     }
 }

@@ -59,6 +59,7 @@ export class StoresController {
     }
 
     @Get('state')
+    @ApiOperation({ summary: 'Retorna todas as lojas que estão dentro do estado mencionado.' })
     async storeByState(@Query('state') state: string) {
         return this.storesService.findByState(state);
     }
@@ -68,6 +69,26 @@ export class StoresController {
         const coordinates = await this.googleMapsService.getCoordinates(cep);
         return this.storesService.findNearby(coordinates.lat, coordinates.lng)
     }
+
+    @Get('findNearby')
+    @ApiOperation({ summary: 'Buscar lojas próximas de um CEP' })
+    @ApiResponse({ status: 200, description: 'Lista de lojas próximas.' })
+    @ApiResponse({ status: 400, description: 'CEP inválido ou não encontrado.' })
+    async findStoresNearby(@Query('cep') cep: string) {
+    const stores = await this.storesService.findNearbyByCep(cep);
+    return {
+        message: 'Lojas encontradas com sucesso.',
+        lojas: stores.map(store => ({
+            storeID: store.storeID,
+            storeName: store.storeName,
+            address1: store.address1,
+            city: store.city,
+            state: store.state,
+            distance: `${(store.distance / 1000).toFixed(1)} km`
+        })),
+    };
+}
+
 
     @Get('test-distance')
     async testDistance(
